@@ -239,8 +239,14 @@ app.delete("/products/:id", async (req, res) => {
 
 app.post("/purchase-orders", async (req, res) => {
   try {
-    const { poNumber, supplierId, orderDate, expectedDeliveryDate, items } =
-      req.body;
+    const {
+      poNumber,
+      supplierId,
+      orderDate,
+      expectedDeliveryDate,
+      source,
+      items,
+    } = req.body;
 
     // Basic PO validation
     if (typeof poNumber !== "string" || poNumber.trim() === "") {
@@ -302,6 +308,11 @@ app.post("/purchase-orders", async (req, res) => {
         error: "Supplier is inactive",
       });
     }
+    if (source !== undefined && source !== "MANUAL" && source !== "EXCEL") {
+      return res.status(400).json({
+        error: "Invalid purchase order source",
+      });
+    }
 
     // Validate each PO item
     for (const item of items) {
@@ -353,6 +364,7 @@ app.post("/purchase-orders", async (req, res) => {
         supplierId,
         orderDate: parsedOrderDate,
         expectedDeliveryDate: parsedExpectedDeliveryDate,
+        source: source ?? "MANUAL",
         items: {
           create: items.map((item: any) => ({
             productId: item.productId,
