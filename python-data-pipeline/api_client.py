@@ -25,3 +25,15 @@ def create_purchase_order(purchase_order):
     response.raise_for_status()
 
     return response.json()
+
+
+def get_receiving_report(date):
+    response = requests.get(
+        f"{BASE_URL}/receivings/report",
+        params={"date": date},
+        timeout=10,
+    )
+
+    response.raise_for_status()
+
+    return response.json()

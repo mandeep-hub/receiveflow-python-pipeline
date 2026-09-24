@@ -911,14 +911,11 @@ app.get("/receivings/report", async (req, res) => {
         const previouslyReceived =
           previousReceivedByItem.get(item.purchaseOrderItemId) ?? 0;
 
-        const remainingQuantity = Math.max(
-          quantityOrdered - previouslyReceived,
-          0,
-        );
-
-        const difference = item.quantityReceived - remainingQuantity;
-
         const totalReceived = previouslyReceived + item.quantityReceived;
+
+        const remainingQuantity = Math.max(quantityOrdered - totalReceived, 0);
+
+        const difference = totalReceived - quantityOrdered;
 
         previousReceivedByItem.set(item.purchaseOrderItemId, totalReceived);
 
